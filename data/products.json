@@ -10,8 +10,13 @@
     "value": 15.7
   },
   {
-    "id": "b46ab382-b5d0-4a6b-9983-6f1064d1abae",
+    "id": "9f1075fd-415a-4017-b1cf-818a4f4409b6",
     "description": "sofa",
     "value": 45.8
+  },
+  {
+    "id": "4c7e6b59-0db1-42d9-9f81-41b6d159d356",
+    "description": "telefone",
+    "value": 3
   }
 ]
