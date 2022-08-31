@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "description": "mesa",
+    "value": 5.7
+  },
+  {
+    "id": 2,
+    "description": "cadeira",
+    "value": 15.7
+  }
+]
