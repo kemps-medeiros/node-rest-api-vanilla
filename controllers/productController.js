@@ -1,5 +1,9 @@
 const Product = require('../models/productModel');
 
+const {
+    getPostData
+} = require('../utils')
+
 async function getProducts(req, res) {
     try {
 
@@ -46,28 +50,64 @@ async function getProduct(req, res, id) {
 async function createProduct(req, res) {
     try {
 
-        let body = '';
-        req.on('data', (chunk) => {
-            body += chunk.toString()
-        })
+        const body = await getPostData(req)
 
-        req.on('end', async () => {
+        const {
+            description,
+            value
+        } = JSON.parse(body)
+
+        const product = {
+            description,
+            value
+        }
+
+        const newProduct = await Product.create(product)
+        res.writeHead(201, {
+            'Content-Type': 'application/json'
+        });
+        return res.end(JSON.stringify(newProduct))
+
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+async function updateProduct(req, res, id) {
+    try {
+
+        const productFound = await Product.findById(id)
+
+        if (!productFound) {
+
+            res.writeHead(404, {
+                'Content-Type': 'application/json'
+            });
+            res.end(JSON.stringify({
+                message: "Product Not Found"
+            }))
+
+        } else {
+            const body = await getPostData(req)
+
             const {
                 description,
                 value
             } = JSON.parse(body)
 
             const product = {
-                description,
-                value
+                description: description || productFound.description,
+                value: value || productFound.value
             }
 
-            const newProduct = await Product.create(product)
-            res.writeHead(201, {
+            const updatedProduct = await Product.update(id, product)
+
+            res.writeHead(200, {
                 'Content-Type': 'application/json'
             });
-            return res.end(JSON.stringify(newProduct))
-        })
+            return res.end(JSON.stringify(updatedProduct))
+        }
+
 
 
     } catch (error) {
@@ -75,8 +115,38 @@ async function createProduct(req, res) {
     }
 }
 
+async function removeProduct(req, res, id) {
+    try {
+        const productFound = await Product.findById(id)
+
+        if (!productFound) {
+
+            res.writeHead(404, {
+                'Content-Type': 'application/json'
+            });
+            res.end(JSON.stringify({
+                message: "Product Not Found"
+            }))
+
+        } else {
+            await Product.remove(id)
+            res.writeHead(200, {
+                'Content-Type': 'application/json'
+            })
+            res.end(JSON.stringify({
+                message: `Product ${id} removed`
+            }))
+        }
+
+    } catch (error) {
+
+    }
+}
+
 module.exports = {
     getProducts,
     getProduct,
-    createProduct
+    createProduct,
+    updateProduct,
+    removeProduct
 }
